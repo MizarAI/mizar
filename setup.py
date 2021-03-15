@@ -22,11 +22,7 @@ setup(
     packages=find_packages(),
     python_requires=">=3.6",
     install_requires=[
-        "click>=5.1",
         "requests==2.23.0",
-        "scikit-learn>=0.22.2",
-        "pandas>=1.0.1",
-        "requests"
     ],
     classifiers=[
         "Programming Language :: Python",
