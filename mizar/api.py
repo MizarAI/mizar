@@ -3,6 +3,7 @@ import os
 import pickle
 from typing import Any
 from typing import Dict
+from typing import Optional
 
 import requests
 
@@ -100,33 +101,71 @@ class Mizar:
         resp = self._get("exchanges")
         return self._handle_response(resp)
 
-    def get_bar_types(self):
-        resp = self._get("bar-types")
+    def get_bar_types(
+            self,
+            *,
+            base_asset: Optional[str] = None,
+            quote_asset: Optional[str] = None,
+            bar_type: Optional[str] = None,
+            bar_subclass: Optional[str] = None,
+            exchange: Optional[str] = None,
+            **kwargs
+    ):
+        """
+        Return the bar types
+
+        :param base_asset: Base asset to select (e.g. BTC)
+        :type base_asset: str
+        :param quote_asset: Quote asset to select (e.g. USDT)
+        :type quote_asset: str
+        :param bar_type: bar type can be (e.g. tick, dollar, volume, time)
+        :type bar_type: str
+        :param bar_subclass: bar subclass specify the class of bar type
+                             to select (e.g. 1min, 3min, dynamic etc..)
+        :type bar_subclass: str
+        :param exchange: exchange name
+        :type exchange: str
+        """
+        kwargs.update(
+            {
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+                "bar_type": bar_type,
+                "bar_subclass": bar_subclass,
+                "exchange": exchange
+            }
+        )
+
+        resp = self._get("bar-types", params=kwargs)
         return self._handle_response(resp)
 
     def get_bar_data(
         self,
         *,
-        base_asset,
-        quote_asset,
-        start_timestamp,
-        end_timestamp,
-        exchange_name="binance",
-        bar_type="time",
-        bar_frequency="1min",
+        base_asset: str,
+        quote_asset: str,
+        start_timestamp: int = 0,
+        bar_type: str = "time",
+        bar_subclass: str = "D",
+        exchange: str = "binance",
         **kwargs,
     ):
         """
-        call to get bar data
+        Return the bar data for a specific bar type
 
-        :param base_asset:
-        :param quote_asset:
-        :param start_timestamp:
-        :param end_timestamp:
-        :param exchange_name:
-        :param bar_type:
-        :param bar_frequency:
-        :param kwargs:
+        :param base_asset: Base asset to select (e.g. BTC)
+        :type base_asset: str
+        :param quote_asset: Quote asset to select (e.g. USDT)
+        :type quote_asset: str
+        :param start_timestamp: The timestamp from which collect the bars
+        :int start_timestamp: int
+        :param exchange: exchange name
+        :type exchange: str
+        :param bar_type: bar type can be (e.g. tick, dollar, volume, time)
+        :type bar_type: str
+        :param bar_subclass: bar subclass specify the class of bar type
+                             to select (e.g. 1min, 3min, dynamic etc..)
+        :type bar_subclass: str
         :return:
 
         [
@@ -166,10 +205,9 @@ class Mizar:
                 "base_asset": base_asset,
                 "quote_asset": quote_asset,
                 "start_timestamp": start_timestamp,
-                "end_timestamp": end_timestamp,
-                "exchange_name": exchange_name,
+                "exchange_name": exchange,
                 "bar_type": bar_type,
-                "bar_frequency": bar_frequency,
+                "bar_subclass": bar_subclass,
             }
         )
         resp = self._get("bar", params=kwargs)
