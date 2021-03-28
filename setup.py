@@ -21,9 +21,7 @@ setup(
     url="https://github.com/MizarAI/mizar",
     packages=find_packages(),
     python_requires=">=3.6",
-    install_requires=[
-        "requests==2.23.0",
-    ],
+    install_requires=["requests==2.23.0", "pandas==1.2.2"],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
@@ -37,5 +35,5 @@ setup(
         "Topic :: System :: Networking",
         "Topic :: Communications :: Chat",
         "Intended Audience :: Developers",
-    ]
+    ],
 )
