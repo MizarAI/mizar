@@ -4,4 +4,3 @@ venv/*
 *.egg-info/*
 dist/*
 build/*
-mothballed.py
