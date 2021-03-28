@@ -3,25 +3,31 @@ from pathlib import Path
 from setuptools import find_packages
 from setuptools import setup
 
-__version__ = "0.1.0"
+__version__ = "0.0.1"
 
 ROOT_DIR = Path(".")
+
+with open("requirements.txt") as f:
+    requirements = f.readlines()
 
 with open(str(ROOT_DIR / "README.md")) as readme:
     long_description = readme.read()
 
 setup(
-    name="Mizar",
+    name="mizar",
     version=__version__,
-    author="mizar.ai",
-    author_email="jack@mizar.ai, francesco@mizar.ai, alex@mizar.ai",
-    description="Official API for the mizar.ai platform",
+    author="MizarAI",
+    author_email="info@mizar.ai",
+    description="Official API for the MizarAI platform",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/MizarAI/mizar",
     packages=find_packages(),
     python_requires=">=3.6",
-    install_requires=["requests==2.23.0", "pandas==1.2.2"],
+    install_requires=requirements,
+    project_urls={
+        "Bug Tracker": "https://github.com/MizarAI/mizar/issues",
+    },
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
