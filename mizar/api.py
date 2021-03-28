@@ -35,7 +35,8 @@ class Mizar:
         self.api_key = api_key
         self.session = self._create_session()
         self.api_url = api_url or self.API_URL
-        assert scheme in ("http", "https")
+        if scheme not in ("http", "https"):
+            raise ValueError("Allowed scheme are http and https")
         self.api_url = self.API_URL.format(
             scheme=scheme, host=host, version=self.API_VERSION
         )
@@ -63,8 +64,8 @@ class Mizar:
 
     def ping(self):
         resp = self._get("ping")
-        assert "pong" in resp.json().get("message")
-        assert resp.status_code == 200
+        if "pong" not in resp.json().get("message", []) or resp.status_code != 200:
+            raise MizarAPIException(resp.text)
         return self._handle_response(resp)
 
     def _handle_response(self, response):
@@ -102,14 +103,14 @@ class Mizar:
         return self._handle_response(resp)
 
     def get_bar_types(
-            self,
-            *,
-            base_asset: Optional[str] = None,
-            quote_asset: Optional[str] = None,
-            bar_type: Optional[str] = None,
-            bar_subclass: Optional[str] = None,
-            exchange: Optional[str] = None,
-            **kwargs
+        self,
+        *,
+        base_asset: Optional[str] = None,
+        quote_asset: Optional[str] = None,
+        bar_type: Optional[str] = None,
+        bar_subclass: Optional[str] = None,
+        exchange: Optional[str] = None,
+        **kwargs,
     ):
         """
         Return the bar types
@@ -132,7 +133,7 @@ class Mizar:
                 "quote_asset": quote_asset,
                 "bar_type": bar_type,
                 "bar_subclass": bar_subclass,
-                "exchange": exchange
+                "exchange": exchange,
             }
         )
 
@@ -145,6 +146,7 @@ class Mizar:
         base_asset: str,
         quote_asset: str,
         start_timestamp: int = 0,
+        limit: int = 500,
         bar_type: str = "time",
         bar_subclass: str = "D",
         exchange: str = "binance",
@@ -159,6 +161,8 @@ class Mizar:
         :type quote_asset: str
         :param start_timestamp: The timestamp from which collect the bars
         :int start_timestamp: int
+        :param limit: max number of bars to fetch (maximum allowed limit is 500)
+        :type limit: int
         :param exchange: exchange name
         :type exchange: str
         :param bar_type: bar type can be (e.g. tick, dollar, volume, time)
@@ -205,7 +209,8 @@ class Mizar:
                 "base_asset": base_asset,
                 "quote_asset": quote_asset,
                 "start_timestamp": start_timestamp,
-                "exchange_name": exchange,
+                "limit": limit,
+                "exchange": exchange,
                 "bar_type": bar_type,
                 "bar_subclass": bar_subclass,
             }
