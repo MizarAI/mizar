@@ -39,5 +39,4 @@ jobs:
         # Runs the test on mizar packages
       - name: package test
         run: |
-          pip install -r test-requirements.txt
           pip install -e .
