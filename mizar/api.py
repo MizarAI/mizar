@@ -1,6 +1,6 @@
 import json
 import os
-import pickle
+import dill as pickle
 from typing import Any
 from typing import Dict
 from typing import Optional
