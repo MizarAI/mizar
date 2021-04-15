@@ -1,2 +1,4 @@
 requests>=2.23.0
+pandas==1.2.2
+
 dill>=0.3.3
