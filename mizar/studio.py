@@ -6,7 +6,7 @@ from mizar.api import Mizar
 
 
 class MizarStudio:
-    def __init__(self, mizar: Mizar, path: str):
+    def __init__(self, mizar: Mizar, path: str = "./"):
         self.mizar = mizar
         self.path = path
         if path[-1] != "/":
