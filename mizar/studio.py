@@ -1,4 +1,3 @@
-import json
 import os
 
 import pandas as pd
@@ -48,7 +47,7 @@ class MizarStudio:
             timestamp = bars_df["time"].max()
 
         else:
-            os.makedirs(f"{dir}/")
+            os.makedirs(f"{dir}/", exist_ok=True)
             bars_df = pd.DataFrame()
             timestamp = start_timestamp
 
@@ -66,9 +65,7 @@ class MizarStudio:
                 exchange=exchange,
             )
 
-            bars_df = pd.concat(
-                [bars_df, pd.DataFrame(**json.loads(response["data"]))], axis=0
-            )
+            bars_df = pd.concat([bars_df, pd.DataFrame(response["data"])], axis=0)
             bars_df.drop_duplicates(
                 inplace=True, ignore_index=True, subset=["first_trade_id"]
             )
