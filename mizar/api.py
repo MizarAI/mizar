@@ -1,11 +1,14 @@
 import json
 import os
-import dill as pickle
 from typing import Any
 from typing import Dict
 from typing import Optional
 
+import dill as pickle
 import requests
+
+MAXIMUM_STRATEGY_SIZE_ALLOWED = 200
+MAXIMUM_STRATEGY_FILE = 2
 
 
 class MizarAPIException(Exception):
@@ -16,9 +19,15 @@ class MizarRequestException(Exception):
     pass
 
 
-class StrategySizeLimitReached(Exception):
-    def __init__(self, signal_size: float, maximum_signal_size_allowed: float):
-        message = f"Maximum size of {maximum_signal_size_allowed}MB exceeded. Signal size is {signal_size}MB."
+class StrategySizeExceededLimit(Exception):
+    def __init__(self, strategy_model_size: float, maximum_strategy_model_size: float):
+        message = f"Maximum size of {maximum_strategy_model_size}MB exceeded. Strategy model size is {strategy_model_size}MB."
+        super().__init__(message)
+
+
+class StrategyFileSizeExceededLimit(Exception):
+    def __init__(self, strategy_file_size: float, maximum_strategy_file_size: float):
+        message = f"Maximum size of {maximum_strategy_file_size}MB exceeded. Strategy file size is {strategy_file_size}MB."
         super().__init__(message)
 
 
@@ -218,35 +227,34 @@ class Mizar:
         resp = self._get("bar", params=kwargs)
         return self._handle_response(resp)
 
-    def save_strategy_signal(
+    def save_strategy(
         self,
         strategy,
-        strategy_signal_info: Dict[str, Any],
+        strategy_info: Dict[str, Any],
+        strategy_file: str = "",
     ):
-        # TODO: later stage check if strategy-info entries match with
-        #  strategy properties
         import codecs
-
-        MAXIMUM_SIGNAL_SIZE_ALLOWED = 200
 
         encoded_strategy = codecs.encode(pickle.dumps(strategy), "base64")
 
         encoded_strategy_size = len(encoded_strategy) / 1e6
+        encoded_strategy_file_size = len(strategy_file.encode("utf-8")) / 1e6
 
-        if encoded_strategy_size > MAXIMUM_SIGNAL_SIZE_ALLOWED:
-            raise StrategySizeLimitReached(
-                encoded_strategy_size, MAXIMUM_SIGNAL_SIZE_ALLOWED
+        if encoded_strategy_size > MAXIMUM_STRATEGY_SIZE_ALLOWED:
+            raise StrategySizeExceededLimit(
+                encoded_strategy_size, MAXIMUM_STRATEGY_SIZE_ALLOWED
             )
+
+        if encoded_strategy_file_size > MAXIMUM_STRATEGY_FILE:
+            raise StrategyFileSizeExceededLimit(
+                encoded_strategy_file_size, MAXIMUM_STRATEGY_FILE
+            )
+
         resp = self._post(
             "save-strategy",
-            # do not change the way the data is posted to mizar
-            # the strategy info are dumped in a json string because
-            # data does not support nested dictionaries. The values in data
-            # haveto be not nested
             data={
-                "strategy-info": json.dumps(strategy_signal_info),
-                # protocol is set to 0 otherwise we lose info when
-                # the pickle object is transformed to string
+                "strategy-info": json.dumps(strategy_info),
+                "strategy-file": strategy_file,
                 "strategy": encoded_strategy.decode(),
             },
         )
