@@ -7,7 +7,7 @@ from typing import Optional
 import dill as pickle
 import requests
 
-MAXIMUM_STRATEGY_SIZE_ALLOWED = 200
+MAXIMUM_STRATEGY_SIZE = 200
 MAXIMUM_STRATEGY_FILE = 2
 
 
@@ -240,9 +240,9 @@ class Mizar:
         encoded_strategy_size = len(encoded_strategy) / 1e6
         encoded_strategy_file_size = len(strategy_file.encode("utf-8")) / 1e6
 
-        if encoded_strategy_size > MAXIMUM_STRATEGY_SIZE_ALLOWED:
+        if encoded_strategy_size > MAXIMUM_STRATEGY_SIZE:
             raise StrategySizeExceededLimit(
-                encoded_strategy_size, MAXIMUM_STRATEGY_SIZE_ALLOWED
+                encoded_strategy_size, MAXIMUM_STRATEGY_SIZE
             )
 
         if encoded_strategy_file_size > MAXIMUM_STRATEGY_FILE:
