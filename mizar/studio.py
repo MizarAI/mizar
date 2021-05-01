@@ -72,4 +72,9 @@ class MizarStudio:
             timestamp = bars_df["time"].max()
         bars_df.sort_values(by="time", inplace=True)
         bars_df.to_csv(f"{dir}/{bar_subclass}_bar_data.csv", index=False)
+        bars_df.set_index(
+            pd.to_datetime(bars_df["time"], unit="ms"), inplace=True, drop=True
+        )
+        bars_df.set_index(bars_df.index.tz_localize(None), inplace=True, drop=True)
+        bars_df.drop("time", axis=1, inplace=True)
         return bars_df
