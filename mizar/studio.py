@@ -1,4 +1,5 @@
 import os
+from typing import Dict
 
 import pandas as pd
 
@@ -78,3 +79,38 @@ class MizarStudio:
         bars_df.set_index(bars_df.index.tz_localize(None), inplace=True, drop=True)
         bars_df.drop("time", axis=1, inplace=True)
         return bars_df
+
+    def save_strategy(
+        self,
+        strategy,
+        strategy_file_path: str,
+        labeling_methodology: str,
+        labeling_config: Dict[str, float],
+        data_sources: Dict[str : Dict[str, str]],
+        num_expiration_bars: int,
+        strategy_name: str,
+        strategy_description: str,
+    ):
+
+        with open(
+            strategy_file_path,
+        ) as r:
+            strategy_file = r.read()
+
+        align_on = strategy.strategy_pipeline.align_on_
+
+        strategy_info = {
+            "strategy_signal_name": strategy_name,
+            "labeling_info": {
+                "labeling_name": labeling_methodology,
+                "labeling_config": labeling_config,
+            },
+            "target_data_source": align_on,
+            "num_expiration_bars": num_expiration_bars,
+            "data_sources": data_sources,
+            "description": strategy_description,
+        }
+
+        self.mizar.save_strategy(
+            strategy=strategy, strategy_file=strategy_file, strategy_info=strategy_info
+        )
