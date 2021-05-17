@@ -66,6 +66,9 @@ class MizarStudio:
                 exchange=exchange,
             )
 
+            if not response.get("data"):
+                continue
+
             bars_df = pd.concat([bars_df, pd.DataFrame(response["data"])], axis=0)
             bars_df.drop_duplicates(
                 inplace=True, ignore_index=True, subset=["first_trade_id"]
@@ -86,7 +89,7 @@ class MizarStudio:
         strategy_file_path: str,
         labeling_methodology: str,
         labeling_config: Dict[str, float],
-        data_sources: Dict[str : Dict[str, str]],
+        data_sources: Dict[str, Dict[str, str]],
         num_expiration_bars: int,
         strategy_name: str,
         strategy_description: str,
