@@ -87,8 +87,6 @@ class MizarStudio:
         self,
         strategy,
         strategy_file_path: str,
-        labeling_methodology: str,
-        labeling_config: Dict[str, float],
         data_sources: Dict[str, Dict[str, str]],
         num_expiration_bars: int,
         strategy_name: str,
@@ -101,17 +99,17 @@ class MizarStudio:
             strategy_file = r.read()
 
         align_on = strategy.strategy_pipeline.align_on_
+        trailing_stop_loss_deviation = strategy.trailing_stop_loss_deviation
+        trailing_take_profit_deviation = strategy.trailing_take_profit_deviation
 
         strategy_info = {
             "strategy_signal_name": strategy_name,
-            "labeling_info": {
-                "labeling_name": labeling_methodology,
-                "labeling_config": labeling_config,
-            },
             "target_data_source": align_on,
             "num_expiration_bars": num_expiration_bars,
             "data_sources": data_sources,
             "description": strategy_description,
+            "trailing_take_profit_deviation": trailing_take_profit_deviation,
+            "trailing_stop_loss_deviation": trailing_stop_loss_deviation,
         }
 
         self.mizar.save_strategy(

@@ -3,7 +3,7 @@ from pathlib import Path
 from setuptools import find_packages
 from setuptools import setup
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 
 ROOT_DIR = Path(".")
 
