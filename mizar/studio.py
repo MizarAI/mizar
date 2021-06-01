@@ -101,6 +101,8 @@ class MizarStudio:
         align_on = strategy.strategy_pipeline.align_on_
         trailing_stop_loss_deviation = strategy.trailing_stop_loss_deviation
         trailing_take_profit_deviation = strategy.trailing_take_profit_deviation
+        stop_loss_tick_level = strategy.stop_loss_tick_level
+        take_profit_tick_level = strategy.take_profit_tick_level
 
         strategy_info = {
             "strategy_signal_name": strategy_name,
@@ -110,6 +112,8 @@ class MizarStudio:
             "description": strategy_description,
             "trailing_take_profit_deviation": trailing_take_profit_deviation,
             "trailing_stop_loss_deviation": trailing_stop_loss_deviation,
+            "stop_loss_tick_level": stop_loss_tick_level,
+            "take_profit_tick_level": take_profit_tick_level,
         }
 
         self.mizar.save_strategy(
