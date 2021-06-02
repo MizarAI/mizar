@@ -88,7 +88,6 @@ class MizarStudio:
         strategy,
         strategy_file_path: str,
         data_sources: Dict[str, Dict[str, str]],
-        num_expiration_bars: int,
         strategy_name: str,
         strategy_description: str,
     ):
@@ -98,22 +97,16 @@ class MizarStudio:
         ) as r:
             strategy_file = r.read()
 
-        align_on = strategy.strategy_pipeline.align_on_
-        trailing_stop_loss_deviation = strategy.trailing_stop_loss_deviation
-        trailing_take_profit_deviation = strategy.trailing_take_profit_deviation
-        stop_loss_tick_level = strategy.stop_loss_tick_level
-        take_profit_tick_level = strategy.take_profit_tick_level
-
         strategy_info = {
             "strategy_signal_name": strategy_name,
-            "target_data_source": align_on,
-            "num_expiration_bars": num_expiration_bars,
+            "target_data_source": strategy.strategy_pipeline.align_on_,
+            "num_expiration_bars": strategy.num_expiration_bars,
             "data_sources": data_sources,
             "description": strategy_description,
-            "trailing_take_profit_deviation": trailing_take_profit_deviation,
-            "trailing_stop_loss_deviation": trailing_stop_loss_deviation,
-            "stop_loss_tick_level": stop_loss_tick_level,
-            "take_profit_tick_level": take_profit_tick_level,
+            "trailing_take_profit_deviation": strategy.trailing_take_profit_deviation,
+            "trailing_stop_loss_deviation": strategy.trailing_stop_loss_deviation,
+            "stop_loss_tick_level": strategy.stop_loss_tick_level,
+            "take_profit_tick_level": strategy.take_profit_tick_level,
         }
 
         self.mizar.save_strategy(
