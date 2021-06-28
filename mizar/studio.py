@@ -41,14 +41,14 @@ class MizarStudio:
         :return: bar dataframe
         :rtype: pd.DataFrame
         """
-        dir = f"{self.path}bar/{exchange}/{base_asset}{quote_asset}/{bar_type}"
+        directory = f"{self.path}bar/{exchange}/{base_asset}{quote_asset}/{bar_type}"
 
-        if os.path.isfile(f"{dir}/{bar_subclass}_bar_data.csv"):
-            bars_df = pd.read_csv(f"{dir}/{bar_subclass}_bar_data.csv")
+        if os.path.isfile(f"{directory}/{bar_subclass}_bar_data.csv"):
+            bars_df = pd.read_csv(f"{directory}/{bar_subclass}_bar_data.csv")
             timestamp = bars_df["time"].max()
 
         else:
-            os.makedirs(f"{dir}/", exist_ok=True)
+            os.makedirs(f"{directory}/", exist_ok=True)
             bars_df = pd.DataFrame()
             timestamp = start_timestamp
 
@@ -66,16 +66,17 @@ class MizarStudio:
                 exchange=exchange,
             )
 
-            if not response.get("data"):
+            if not response.get("bars"):
                 continue
 
-            bars_df = pd.concat([bars_df, pd.DataFrame(response["data"])], axis=0)
+            bars_df = pd.concat([bars_df, pd.DataFrame(response["bars"])], axis=0)
+
             bars_df.drop_duplicates(
                 inplace=True, ignore_index=True, subset=["first_trade_id"]
             )
             timestamp = bars_df["time"].max()
         bars_df.sort_values(by="time", inplace=True)
-        bars_df.to_csv(f"{dir}/{bar_subclass}_bar_data.csv", index=False)
+        bars_df.to_csv(f"{directory}/{bar_subclass}_bar_data.csv", index=False)
         bars_df.set_index(
             pd.to_datetime(bars_df["time"], unit="ms"), inplace=True, drop=True
         )
