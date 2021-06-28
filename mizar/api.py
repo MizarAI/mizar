@@ -2,6 +2,7 @@ import json
 import os
 from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
 
 import dill as pickle
@@ -33,7 +34,7 @@ class StrategyFileSizeExceededLimit(Exception):
 
 class Mizar:
     # API_KEY = "mizar-temp-secret-key"
-    API_VERSION = "v1"
+    API_VERSION = "api/v1"
     API_URL = "{scheme}://{host}/{version}/"
 
     def __init__(self, api_key=None, api_url=None, scheme="https", host="api.mizar.ai"):
@@ -73,42 +74,28 @@ class Mizar:
 
     def ping(self):
         resp = self._get("ping")
-        if "pong" not in resp.json().get("message", []) or resp.status_code != 200:
+        if resp.status_code != 200:
             raise MizarAPIException(resp.text)
+        return self._handle_response(resp)
+
+    def server_time(self):
+        resp = self._get("server-time")
         return self._handle_response(resp)
 
     def _handle_response(self, response):
         if response.ok:
-            try:
-                if response.json().get("data"):
-                    return {
-                        "status": response.status_code,
-                        "url": response.url,
-                        "data": response.json().get("data"),
-                    }
-                elif response.json().get("message"):
-                    return {
-                        "status": response.status_code,
-                        "url": response.url,
-                        "message": response.json().get("message"),
-                    }
-                else:
-                    raise MizarRequestException("No message or data")
-            except ValueError:
-                return MizarRequestException(response.text)
+            return response.json()
+        elif response.status_code == 404:
+            return {"not found"}
         else:
-            raise MizarAPIException(response.json().get("message"))
-
-    def get_quote_assets(self):
-        resp = self._get("quote-assets")
-        return self._handle_response(resp)
-
-    def get_base_assets(self):
-        resp = self._get("base-assets")
-        return self._handle_response(resp)
+            raise MizarAPIException(response.json())
 
     def get_exchanges(self):
         resp = self._get("exchanges")
+        return self._handle_response(resp)
+
+    def get_symbols(self, exchange: str):
+        resp = self._get("symbols", params={"exchange": exchange})
         return self._handle_response(resp)
 
     def get_bar_types(
@@ -224,10 +211,10 @@ class Mizar:
                 "bar_subclass": bar_subclass,
             }
         )
-        resp = self._get("bar", params=kwargs)
+        resp = self._get("bars", params=kwargs)
         return self._handle_response(resp)
 
-    def save_strategy(
+    def save_hosted_strategy(
         self,
         strategy,
         strategy_info: Dict[str, Any],
@@ -251,7 +238,7 @@ class Mizar:
             )
 
         resp = self._post(
-            "save-strategy",
+            "publish-hosted-strategy",
             data={
                 "strategy-info": json.dumps(strategy_info),
                 "strategy-file": strategy_file,
@@ -259,4 +246,67 @@ class Mizar:
             },
         )
 
+        return self._handle_response(resp)
+
+    def create_self_hosted_strategy(
+        self,
+        name: str,
+        description: str,
+        exchange: str,
+        symbols: List[str],
+        market: str,
+    ):
+        resp = self._post(
+            "publish-self-hosted-strategy",
+            json={
+                "name": name,
+                "description": description,
+                "exchange": exchange,
+                "symbols": symbols,
+                "market": market,
+            },
+        )
+        return self._handle_response(resp)
+
+    def open_position(
+        self,
+        strategy_id: int,
+        base_asset: str,
+        quote_asset: str,
+        size: float,
+        is_long: bool,
+    ):
+
+        resp = self._post(
+            "open-position",
+            json={
+                "strategy_id": strategy_id,
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+                "size": size,
+                "is_long": is_long,
+            },
+        )
+        return self._handle_response(resp)
+
+    def close_position(self, position_id: int):
+        resp = self._post(
+            "close-position",
+            json={
+                "position_id": position_id,
+            },
+        )
+        return self._handle_response(resp)
+
+    def close_all_positions(self, strategy_id: int):
+        resp = self._post(
+            "close-all-positions",
+            json={
+                "strategy_id": strategy_id,
+            },
+        )
+        return self._handle_response(resp)
+
+    def get_all_open_positions(self, strategy_id: int):
+        resp = self._get("all-open-positions", params={"strategy_id": strategy_id})
         return self._handle_response(resp)
