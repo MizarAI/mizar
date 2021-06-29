@@ -310,3 +310,7 @@ class Mizar:
     def get_all_open_positions(self, strategy_id: int):
         resp = self._get("all-open-positions", params={"strategy_id": strategy_id})
         return self._handle_response(resp)
+
+    def get_all_self_hosted_strategies_info(self):
+        resp = self._get("self-hosted-strategy-info")
+        return self._handle_response(resp)
