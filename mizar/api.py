@@ -94,8 +94,8 @@ class Mizar:
         resp = self._get("exchanges")
         return self._handle_response(resp)
 
-    def get_symbols(self, exchange: str):
-        resp = self._get("symbols", params={"exchange": exchange})
+    def get_symbols(self, exchange: str, market: str = None):
+        resp = self._get("symbols", params={"exchange": exchange, "market": market})
         return self._handle_response(resp)
 
     def get_bar_types(
