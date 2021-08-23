@@ -1,4 +1,4 @@
-# pytest &&
+ pytest &&
 rm -r dist &&
 rm -r build &&
 python3 -m pip install --upgrade setuptools wheel &&

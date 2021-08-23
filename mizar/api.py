@@ -85,8 +85,6 @@ class Mizar:
     def _handle_response(self, response):
         if response.ok:
             return response.json()
-        elif response.status_code == 404:
-            return {"not found"}
         else:
             raise MizarAPIException(response.json())
 
@@ -252,7 +250,7 @@ class Mizar:
         self,
         name: str,
         description: str,
-        exchange: str,
+        exchanges: List[str],
         symbols: List[str],
         market: str,
     ):
@@ -261,7 +259,7 @@ class Mizar:
             json={
                 "name": name,
                 "description": description,
-                "exchange": exchange,
+                "exchanges": exchanges,
                 "symbols": symbols,
                 "market": market,
             },
