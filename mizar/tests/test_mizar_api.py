@@ -33,7 +33,7 @@ def test_ping_api_exception(client):
     with pytest.raises(MizarAPIException):
         with requests_mock.mock() as m:
             m.get(
-                "https://api.mizar.ai/v1/ping",
+                "https://api.mizar.ai/api/v1/ping",
                 json={"message": "API exception"},
                 status_code=400,
             )
@@ -43,7 +43,7 @@ def test_ping_api_exception(client):
 def test_ping_working(client):
     with requests_mock.mock() as m:
         m.get(
-            "https://api.mizar.ai/v1/ping",
+            "https://api.mizar.ai/api/v1/ping",
             json={"message": "pong"},
             status_code=200,
         )
