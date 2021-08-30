@@ -312,3 +312,127 @@ class Mizar:
     def get_all_self_hosted_strategies_info(self):
         resp = self._get("self-hosted-strategy-info")
         return self._handle_response(resp)
+
+    def get_dca_bot_position(self, bot_id: int, base_asset: str, quote_asset: str):
+        resp = self._get(
+            "dca-bots/get-position",
+            params={
+                "bot_id": bot_id,
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+            },
+        )
+        return self._handle_response(resp)
+
+    def get_dca_bot_safety_orders(self, bot_id: int, base_asset: str, quote_asset: str):
+        resp = self._get(
+            "dca-bots/get-safety-orders",
+            params={
+                "bot_id": bot_id,
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+            },
+        )
+        return self._handle_response(resp)
+
+    def get_dca_bot_active_safety_orders(
+        self, bot_id: int, base_asset: str, quote_asset: str
+    ):
+        resp = self._get(
+            "dca-bots/get-active-safety-orders",
+            params={
+                "bot_id": bot_id,
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+            },
+        )
+        return self._handle_response(resp)
+
+    def get_dca_bot_inactive_safety_orders(
+        self, bot_id: int, base_asset: str, quote_asset: str
+    ):
+        resp = self._get(
+            "dca-bots/get-inactive-safety-orders",
+            params={
+                "bot_id": bot_id,
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+            },
+        )
+        return self._handle_response(resp)
+
+    def get_dca_bot_get_take_profit_orders(
+        self, bot_id: int, base_asset: str, quote_asset: str
+    ):
+        resp = self._get(
+            "dca-bots/get-inactive-safety-orders",
+            params={
+                "bot_id": bot_id,
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+            },
+        )
+        return self._handle_response(resp)
+
+    def dca_bot_open_position(
+        self,
+        bot_id: int,
+        base_asset: str,
+        quote_asset: str,
+        take_profit_pct: float = None,
+        stop_loss_pct: float = None,
+    ):
+        resp = self._post(
+            "dca-bots/open-position",
+            json={
+                "bot_id": bot_id,
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+                "take_profit_pct": take_profit_pct,
+                "stop_loss_pct": stop_loss_pct,
+            },
+        )
+        return self._handle_response(resp)
+
+    def dca_bot_close_position(self, bot_id: int, base_asset: str, quote_asset: str):
+        resp = self._post(
+            "dca-bots/close-position",
+            json={
+                "bot_id": bot_id,
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+            },
+        )
+        return self._handle_response(resp)
+
+    def dca_bot_shift_safety_orders(
+        self,
+        bot_id: int,
+        base_asset: str,
+        quote_asset: str,
+        safety_orders_start_price: float,
+    ):
+        resp = self._post(
+            "dca-bots/shift-safety-orders",
+            json={
+                "bot_id": bot_id,
+                "base_asset": base_asset,
+                "quote_asset": quote_asset,
+                "safety_orders_start_price": safety_orders_start_price,
+            },
+        )
+        return self._handle_response(resp)
+
+    def dca_bot_stop_and_close_positions(self, bot_id: int):
+        resp = self._post(
+            "dca-bots/stop-bot-and-close-all-positions",
+            json={"bot_id": bot_id},
+        )
+        return self._handle_response(resp)
+
+    def dca_bot_close_positions(self, bot_id: int):
+        resp = self._post(
+            "dca-bots/close-all-positions",
+            json={"bot_id": bot_id},
+        )
+        return self._handle_response(resp)
