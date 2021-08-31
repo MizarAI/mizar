@@ -361,7 +361,7 @@ class Mizar:
         )
         return self._handle_response(resp)
 
-    def get_dca_bot_get_take_profit_orders(
+    def get_dca_bot_take_profit_orders(
         self, bot_id: int, base_asset: str, quote_asset: str
     ):
         resp = self._get(
